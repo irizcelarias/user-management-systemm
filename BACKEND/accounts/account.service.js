@@ -83,14 +83,20 @@ async function register(params, origin) {
         throw `Email "${params.email}" is already registered`;
     }
 
+    // Remove role from params to prevent manual override
+    delete params.role;
+
+    // Check if this is the first account
+    const isFirstAccount = (await db.Account.count()) === 0;
+
     // Hash the password
     const passwordHash = await bcrypt.hash(params.password, 10);
 
     // Create account object
     const account = new db.Account({
         ...params,
-        passwordHash, // Save the hashed password
-        role: params.role || 'User' // Assign default role if not provided
+        passwordHash,
+        role: isFirstAccount ? 'Admin' : 'User'
     });
 
     // Save account
@@ -104,12 +110,18 @@ async function register(params, origin) {
 }
 
 async function verifyEmail({ token }) {
-    const account = await db.Account.findOne({ where: { verificationToken: token } });
+    let payload;
+    try {
+        payload = jwt.verify(token, config.secret);
+    } catch (err) {
+        throw 'Verification failed';
+    }
 
+    const account = await db.Account.findByPk(payload.id);
     if (!account) throw 'Verification failed';
+    if (account.verified) throw 'Account already verified';
 
     account.verified = Date.now();
-    account.verificationToken = null;
     await account.save();
 }
 
@@ -248,6 +260,9 @@ function basicDetails(account) {
 }
 
 async function sendVerificationEmail(account, token, origin) {
+    console.log('Sending verification email to:', account.email);
+    console.log('Verification token:', token);
+
     let message;
     if (origin) {
         const verifyUrl = `${origin}/verify-email?token=${token}`;
