@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 module.exports = model;
 
 function model(sequelize) {
-    const attributes = {
+    const Account = sequelize.define('account', {
         email: { type: DataTypes.STRING, allowNull: false },
         passwordHash: { type: DataTypes.STRING, allowNull: false },
         title: { type: DataTypes.STRING, allowNull: false },
@@ -11,6 +11,11 @@ function model(sequelize) {
         lastName: { type: DataTypes.STRING, allowNull: false },
         acceptTerms: { type: DataTypes.BOOLEAN },
         role: { type: DataTypes.STRING, allowNull: false },
+        status: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'active'
+        },
         verificationToken: { type: DataTypes.STRING },
         verified: { type: DataTypes.DATE },
         resetToken: { type: DataTypes.STRING },
@@ -20,22 +25,24 @@ function model(sequelize) {
         updated: { type: DataTypes.DATE },
         isVerified: {
             type: DataTypes.VIRTUAL,
-            get() { return !!(this.verified || this.passwordReset); }
+            get() {
+                return !!(this.verified || this.passwordReset);
+            }
         }
-    };
-
-    const options = {
-        // Disable default timestamp fields (createdAt and updatedAt)
+    }, {
         timestamps: false,
         defaultScope: {
-            // Exclude password hash by default
             attributes: { exclude: ['passwordHash'] }
         },
         scopes: {
-            // Include hash with this scope
-            withHash: { attributes: {}, }
+            withHash: { attributes: {} }
         }
+    });
+
+    Account.prototype.getRefreshTokens = function () {
+        const db = require('../_helpers/db');
+        return db.RefreshToken.findAll({ where: { accountId: this.id } });
     };
 
-    return sequelize.define('account', attributes, options);
+    return Account;
 }

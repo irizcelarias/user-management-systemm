@@ -1,22 +1,16 @@
-const Joi = require('joi');
+module.exports = validateRequest;
 
 function validateRequest(req, next, schema) {
     const options = {
-        abortEarly: false, // Include all errors
-        allowUnknown: true, // Ignore unknown properties
-        stripUnknown: true // Remove unknown properties
+        abortEarly: false, // include all errors
+        allowUnknown: true, // ignore unknown props
+        stripUnknown: true // remove unknown props
     };
-
     const { error, value } = schema.validate(req.body, options);
     if (error) {
-        // Pass an Error object to next()
-        const validationError = new Error(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
-        validationError.status = 400; // Set HTTP status code for validation errors
-        return next(validationError);
+        next(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
     } else {
         req.body = value;
         next();
     }
 }
-
-module.exports = validateRequest;

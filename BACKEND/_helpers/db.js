@@ -1,29 +1,64 @@
-// db.js
-const config = require('config.json');
+const config = require('../config');
 const mysql = require('mysql2/promise');
 const { Sequelize } = require('sequelize');
 
-module.exports = db = {};
+const db = {};
+module.exports = db;
 
 initialize();
 
 async function initialize() {
-    // create db if it doesn't already exist
+  try {
     const { host, port, user, password, database } = config.database;
+    console.log('Attempting to connect to database...', { host, port, database, user });
+
     const connection = await mysql.createConnection({ host, port, user, password });
+    console.log('Initial connection successful');
+
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
+    await connection.end();
+    console.log('Database verified/created');
 
-    // connect to db
-    const sequelize = new Sequelize(database, user, password, { dialect: 'mysql' });
+    const sequelize = new Sequelize(database, user, password, {
+      host,
+      dialect: 'mysql',
+      logging: false
+    });
 
-    // init models and add them to the exported db object
+    await sequelize.authenticate();
+    console.log('Sequelize connection established.');
+
+    db.sequelize = sequelize;
+    
     db.Account = require('../accounts/account.model')(sequelize);
     db.RefreshToken = require('../accounts/refresh-token.model')(sequelize);
+    db.Department = require('../departments/department.model')(sequelize);
+    db.Employee = require('../employees/employee.model')(sequelize);
+    db.Workflow = require('../workflows/workflow.model')(sequelize);
+    db.Request = require('../requests/request.model')(sequelize);
+    db.RequestItem = require('../requests/request-item.model')(sequelize);
 
-    // define relationships
     db.Account.hasMany(db.RefreshToken, { onDelete: 'CASCADE' });
-    db.RefreshToken.belongsTo(db.Account);
+    db.Account.hasOne(db.Employee, { foreignKey: 'accountId', onDelete: 'CASCADE' });
+    db.RefreshToken.belongsTo(db.Account, { foreignKey: 'accountId' });
+    
+    await sequelize.sync({ force: true }); 
+    console.log('Tables created successfully');
+   
+    db.Employee.belongsTo(db.Account, { foreignKey: 'accountId' });
+    db.Department.hasMany(db.Employee, { foreignKey: 'departmentId' });
+    db.Employee.belongsTo(db.Department, { foreignKey: 'departmentId', as: 'department' });
+    db.Employee.hasMany(db.Workflow, { foreignKey: 'employeeId', as: 'workflows' });
+    db.Workflow.belongsTo(db.Employee, { foreignKey: 'employeeId', as: 'employee' });
+    db.Employee.hasMany(db.Request, { foreignKey: 'employeeId', as: 'Requests' });
+    db.Request.belongsTo(db.Employee, { foreignKey: 'employeeId', as: 'Employee' });
+    db.Request.hasMany(db.RequestItem, { foreignKey: 'requestId', as: 'RequestItems', onDelete: 'CASCADE' });
+    db.RequestItem.belongsTo(db.Request, { foreignKey: 'requestId', as: 'Request' });
 
-    // sync all models with database
+
     await sequelize.sync({ alter: true });
+    console.log('Database synced successfully with associations.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
 }

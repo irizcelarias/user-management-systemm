@@ -22,7 +22,6 @@ function model(sequelize) {
     };
 
     const options = {
-        // Disable default timestamp fields (createdAt and updatedAt)
         timestamps: false
     };
 
