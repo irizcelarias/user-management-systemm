@@ -9,6 +9,43 @@ import { Role } from '@app/_models';
 // array in local storage for accounts
 const accountsKey = 'angular-10-signup-verification-boilerplate-accounts';
 let accounts = JSON.parse(localStorage.getItem(accountsKey)) || [];
+let departments = [
+  { id: 1, name: 'Engineering', description: 'Tech', employeeCount: 3 },
+  { id: 2, name: 'HR', description: 'People Ops', employeeCount: 1 }
+];
+
+let employees = [
+  {
+    id: 1,
+    employeeId: 'EMP001',
+    userId: 1,
+    position: 'Developer',
+    departmentId: 1,
+    hireDate: '2025-01-01',
+    status: 'Active'
+  }
+];
+
+let requests = [
+  {
+    id: 1,
+    employeeId: 1,
+    type: 'Equipment',
+    requestItems: [{ name: 'Laptop', quantity: 1 }],
+    status: 'Pending'
+  }
+];
+
+let workflows = [
+  {
+    id: 1,
+    employeeId: 1,
+    type: 'Onboarding',
+    details: { step: 'Welcome kit sent' },
+    status: 'Pending'
+  }
+];
+
 
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
@@ -46,8 +83,70 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                     return createAccount();
                 case url.match(/\/accounts\/\d+$/) && method === 'PUT':
                     return updateAccount();
-                    case url.match(/\/accounts\/\d+\/toggle-status$/) && method === 'PUT':
-                        return toggleAccountStatus();
+                case url.match(/\/accounts\/\d+\/toggle-status$/) && method === 'PUT':
+                    return toggleAccountStatus();
+                case url.endsWith('/departments') && method === 'GET':
+                    return ok(departments);
+                case url.endsWith('/departments') && method === 'POST':
+                    const dept = { id: departments.length + 1, ...body, employeeCount: 0 };
+                    departments.push(dept);
+                    return ok(dept);
+                case url.match(/\/departments\/\d+$/) && method === 'PUT':
+                    const deptId = idFromUrl();
+                    const deptIndex = departments.findIndex(d => d.id === deptId);
+                    if (deptIndex === -1) return error('Department not found');
+                    departments[deptIndex] = { ...departments[deptIndex], ...body };
+                    return ok(departments[deptIndex]);
+                case url.match(/\/departments\/\d+$/) && method === 'DELETE':
+                    const delDeptId = idFromUrl();
+                    departments = departments.filter(d => d.id !== delDeptId);
+                    return ok();
+                    case url.endsWith('/employees') && method === 'GET':
+                    return ok(employees);
+                case url.endsWith('/employees') && method === 'POST':
+                    const newEmp = { id: employees.length + 1, ...body };
+                    employees.push(newEmp);
+                    return ok(newEmp);
+                case url.match(/\/employees\/\d+$/) && method === 'PUT':
+                    const empId = idFromUrl();
+                    const empIndex = employees.findIndex(e => e.id === empId);
+                    if (empIndex === -1) return error('Employee not found');
+                    employees[empIndex] = { ...employees[empIndex], ...body };
+                    return ok(employees[empIndex]);
+                case url.match(/\/employees\/\d+$/) && method === 'DELETE':
+                    const delEmpId = idFromUrl();
+                    employees = employees.filter(e => e.id !== delEmpId);
+                    return ok();
+                case url.endsWith('/requests') && method === 'GET':
+                    return ok(requests);
+                case url.endsWith('/requests') && method === 'POST':
+                    const req = { id: requests.length + 1, employeeId: currentAccount()?.id || 1, ...body };
+                    requests.push(req);
+                    return ok(req);
+                case url.match(/\/requests\/\d+$/) && method === 'PUT':
+                    const reqId = idFromUrl();
+                    const reqIndex = requests.findIndex(r => r.id === reqId);
+                    if (reqIndex === -1) return error('Request not found');
+                    requests[reqIndex] = { ...requests[reqIndex], ...body };
+                    return ok(requests[reqIndex]);
+                case url.match(/\/requests\/\d+$/) && method === 'DELETE':
+                    const delReqId = idFromUrl();
+                    requests = requests.filter(r => r.id !== delReqId);
+                    return ok();
+                case url.match(/\/workflows\/employee\/\d+$/) && method === 'GET':
+                    const workflowEmpId = idFromUrl();
+                    const wf = workflows.filter(w => w.employeeId === workflowEmpId);
+                    return ok(wf);
+                case url.endsWith('/workflows') && method === 'POST':
+                    const wfNew = { id: workflows.length + 1, ...body };
+                    workflows.push(wfNew);
+                    return ok(wfNew);
+                case url.match(/\/workflows\/\d+$/) && method === 'PUT':
+                    const wfId = idFromUrl();
+                    const wfIndex = workflows.findIndex(w => w.id === wfId);
+                    if (wfIndex === -1) return error('Workflow not found');
+                    workflows[wfIndex] = { ...workflows[wfIndex], ...body };
+                    return ok(workflows[wfIndex]);
                     
                 default:
                     // pass through any requests not handled above

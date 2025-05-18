@@ -1,25 +1,26 @@
 <h1>Accounts</h1>
 <p>All accounts from secure (admin only) api end point:</p>
-<a routerLink="add" class="btn btn-sm btn-success mb-2">Create Account</a> 
+<a routerLink="add" class="btn btn-sm btn-success mb-2">Add Account</a> 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th style="width:30%">Name</th>
+            <th style="width:10%">Title</th>
+            <th style="width:15%">First Name</th>
+            <th style="width:15%">Last Name</th>
             <th style="width:30%">Email</th> 
-            <th style="width:30%">Role</th> 
+            <th style="width:10%">Role</th> 
+            <th style="width:10%">Status</th>
             <th style="width:10%">Actions</th> 
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let account of accounts">
-            <td>{{account.title}} {{account.firstName}} {{account. lastName}}</td>
+            <td>{{account.title}}</td>
+            <td> {{account.firstName}}</td>
+            <td> {{account. lastName}}</td>
             <td>{{account.email}}</td>
             <td>{{account.role}}</td>
-            
-                <td style="white-space: nowrap">
-                    <a routerLink="edit/{{account.id}}" class="btn btn-sm btn-primary mr-3">Edit</a>
-                
-                    <button *ngIf="account.role !== 'Admin'" 
+             <td><button *ngIf="account.role !== 'Admin'" 
                         (click)="toggleAccountStatus(account)" 
                         class="btn btn-sm" 
                         [ngClass]="{
@@ -31,13 +32,12 @@
                     <span *ngIf="!account.isToggling">
                         {{ account.isActive ? 'Deactivate' : 'Activate' }}
                     </span>
-                </button>
-            
+                </button></td>
+                <td style="white-space: nowrap">
+                    <a routerLink="edit/{{account.id}}" class="btn btn-sm btn-primary mr-3">Edit</a>
                 </td>
                 
-            
-        
-            
+
         </tr>
         <tr *ngIf="!accounts">
             <td colspan="4" class="text-center">

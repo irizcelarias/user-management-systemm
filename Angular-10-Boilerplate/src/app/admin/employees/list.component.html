@@ -1,51 +1,49 @@
-<div class="card">
-    <div class="card-header">EMPLOYEES</div>
-    <div class="card-body p-0">
-        <table class="table mb-0">
-            <thead>
-                <tr>
-                    <th>Employee ID</th>
-                    <th>Account</th>
-                    <th>Position</th>
-                    <th>Department</th>
-                    <th>Hire Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let employee of employees">
-                    <td>{{employee.employeeId}}</td>
-                    <td>{{employee.account}}</td>
-                    <td>{{employee.position}}</td>
-                    <td>{{employee.department}}</td>
-                    <td>{{employee.hireDate | date:'M/d/yyyy'}}</td>
-                    <td>
-                        <span 
-                            class="badge px-2 py-1 rounded-pill fw-semibold"
-                            [ngClass]="{
-                            'bg-success text-light': employee.isActive,
-                            'bg-secondary text-light': !employee.isActive
-                            }">
-                            <i 
-                            class="fas" 
-                            [ngClass]="employee.isActive ? 'fa-check-circle me-1' : 'fa-times-circle me-1'">
-                            </i>
-                            {{ employee.isActive ? 'Active' : 'Inactive' }}
-                        </span>
-                        </td>
+<div class="container mt-4">
+  <div class="card shadow-sm border rounded-3 mx-auto" style="max-width: 1100px;">
+    <div class="card-header bg-light">
+      <h5 class="text-uppercase fw-bold mb-0">Employees</h5>
+    </div>
 
-                    <td>
-                        <button class="btn btn-info btn-sm me-1" (click)="viewRequests(employee.id)">Requests</button>
-                        <button class="btn btn-info btn-sm me-1" (click)="viewWorkflows(employee.id)">Workflows</button>
-                        <button class="btn btn-warning btn-sm me-1" (click)="transfer(employee.id)">Transfer</button>
-                        <button class="btn btn-primary btn-sm" (click)="edit(employee.id)">Edit</button>
-                    </td>
-                </tr>
-            </tbody>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead class="table-light">
+            <tr class="text-start">
+              <th>Employee ID</th>
+              <th>Account</th>
+              <th>Position</th>
+              <th>Department</th>
+              <th>Hire Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let employee of employees">
+              <td>{{ employee.employeeId }}</td>
+              <td>{{ employee.user?.email }}</td>
+              <td>{{ employee.position }}</td>
+              <td>{{ employee.department?.name }}</td>
+              <td>{{ employee.hireDate | date: 'M/d/yyyy' }}</td>
+              <td>
+                <span class="badge bg-success px-3 py-2 fw-medium">{{ employee.status }}</span>
+              </td>
+              <td>
+                <div class="d-flex flex-wrap gap-2">
+                  <button class="btn btn-sm text-white" style="background-color: #17a2b8;" (click)="viewRequests(employee.id)">Requests</button>
+                  <button class="btn btn-sm text-white" style="background-color: #20c997;" (click)="viewWorkflows(employee.id)">Workflows</button>
+                  <button class="btn btn-sm text-dark" style="background-color: #ffc107;" (click)="transfer(employee)">Transfer</button>
+                  <button class="btn btn-sm text-white" style="background-color: #007bff;" (click)="edit(employee.id)">Edit</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
         </table>
+      </div>
+
+      <div class="text-end mt-4">
+        <button class="btn btn-primary px-4" (click)="add()">Add Employee</button>
+      </div>
     </div>
-    <div class="card-footer text-end">
-        <button class="btn btn-primary" (click)="add()">Add Employee</button>
-    </div>
+  </div>
 </div>

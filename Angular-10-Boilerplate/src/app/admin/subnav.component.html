@@ -1,5 +1,16 @@
-<nav class="admin-nav navbar navbar-expand navbar-light">
-    <div class="navbar-nav">
-        <a routerLink="accounts" routerLinkActive="active" class="nav-item nav-link">Accounts</a>
-    </div>
-</nav>
+<div class="border-bottom" style="background-color: #F0F0F0; margin-top: -25px;">
+  <ul class="nav nav-tabs container px-0">
+    <li class="nav-item">
+      <a routerLink="/accounts" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">Accounts</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/employees" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">Employees</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/departments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">Departments</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/requests" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">Requests</a>
+    </li>
+  </ul>
+</div>

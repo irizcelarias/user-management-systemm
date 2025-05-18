@@ -1,50 +1,43 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { DepartmentService } from '../../_services/department.service';
-import { Department } from '../../_models/department';
-import { EmployeeService } from '../../_services/employee.service';
-import { Employee } from '../../_models/employee';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
-    templateUrl: 'list.component.html'
+  selector: 'app-department-list',
+  templateUrl: './list.component.html'
 })
 export class ListComponent implements OnInit {
-    departments: (Department & { employeeCount?: number })[] = [];
-    employees: Employee[] = [];
+  departments: {
+    id: number;
+    name: string;
+    description: string;
+    employeeCount: number;
+  }[] = [];
 
-    constructor(
-        private departmentService: DepartmentService,
-        private employeeService: EmployeeService,
-        private router: Router
-    ) { }
+  currentUser = { role: 'Admin' };
 
-    ngOnInit() {
-        this.loadDepartments();
-    }
+  constructor(private http: HttpClient) {}
 
-    loadDepartments() {
-        this.employeeService.getAll().subscribe(employees => {
-            this.employees = employees;
-            this.departmentService.getAll().subscribe(departments => {
-                this.departments = departments.map(dept => ({
-                    ...dept,
-                    employeeCount: employees.filter(emp => emp.department === dept.name).length
-                }));
-            });
-        });
-    }
+  ngOnInit() {
+    this.http.get<any[]>('/departments').subscribe((res) => {
+      this.departments = res;
+    });
+  }
 
-    add() {
-        this.router.navigate(['/admin/departments/add']);
-    }
+  account() {
+    return this.currentUser;
+  }
 
-    edit(id: string) {
-        this.router.navigate(['/admin/departments/edit', id]);
-    }
+  edit(id: number) {
+    console.log('Editing department:', id);
+  }
 
-    delete(id: string) {
-        if (confirm('Are you sure you want to delete this department?')) {
-            this.departmentService.delete(id).subscribe(() => this.loadDepartments());
-        }
-    }
-} 
+  delete(id: number) {
+    this.http.delete(`/departments/${id}`).subscribe(() => {
+      this.departments = this.departments.filter(d => d.id !== id);
+    });
+  }
+
+  add() {
+    console.log('Add new department');
+  }
+}
