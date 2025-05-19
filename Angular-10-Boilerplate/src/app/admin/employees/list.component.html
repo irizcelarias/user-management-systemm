@@ -26,7 +26,14 @@
               <td>{{ employee.department?.name }}</td>
               <td>{{ employee.hireDate | date: 'M/d/yyyy' }}</td>
               <td>
-                <span class="badge bg-success px-3 py-2 fw-medium">{{ employee.status }}</span>
+                <span class="badge"
+                      [ngClass]="{
+                        'bg-success': employee.status === 'Active',
+                        'bg-danger': employee.status === 'Inactive'
+                      }"
+                      style="padding: 6px 14px;">
+                  {{ employee.status }}
+                </span>
               </td>
               <td>
                 <div class="d-flex flex-wrap gap-2">

@@ -1,26 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-workflow-list',
   templateUrl: './list.component.html'
 })
 export class ListComponent implements OnInit {
-  employeeId: number = 1; // replace with dynamic value
+  employeeId: number = 0;
+  workflows: any[] = [];
   currentUser = { role: 'Admin' };
 
-  workflows: {
-    id: number;
-    type: string;
-    details: any;
-    status: string;
-  }[] = [];
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.http.get<any[]>(`/workflows/employee/${this.employeeId}`).subscribe((res) => {
-      this.workflows = res;
+    this.route.queryParams.subscribe(params => {
+      this.employeeId = +params['employeeId'];
+      this.http.get<any[]>(`/workflows/employee/${this.employeeId}`).subscribe(res => {
+        this.workflows = res;
+      });
     });
   }
 
@@ -30,7 +28,7 @@ export class ListComponent implements OnInit {
 
   updateStatus(workflow: any) {
     this.http.put(`/workflows/${workflow.id}`, workflow).subscribe(() => {
-      console.log(`Updated workflow ${workflow.id} to ${workflow.status}`);
+      console.log('Workflow status updated:', workflow.status);
     });
   }
 }

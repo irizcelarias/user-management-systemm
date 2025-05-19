@@ -36,12 +36,12 @@ let requests = [
   }
 ];
 
-let workflows = [
+let workflows = JSON.parse(localStorage.getItem('workflows') || 'null') || [
   {
     id: 1,
     employeeId: 1,
     type: 'Onboarding',
-    details: { step: 'Welcome kit sent' },
+    details: { step: 'Task: Complete the required government forms' },
     status: 'Pending'
   }
 ];
@@ -140,12 +140,14 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                 case url.endsWith('/workflows') && method === 'POST':
                     const wfNew = { id: workflows.length + 1, ...body };
                     workflows.push(wfNew);
+                    localStorage.setItem('workflows', JSON.stringify(workflows));  
                     return ok(wfNew);
                 case url.match(/\/workflows\/\d+$/) && method === 'PUT':
                     const wfId = idFromUrl();
                     const wfIndex = workflows.findIndex(w => w.id === wfId);
                     if (wfIndex === -1) return error('Workflow not found');
                     workflows[wfIndex] = { ...workflows[wfIndex], ...body };
+                    localStorage.setItem('workflows', JSON.stringify(workflows)); 
                     return ok(workflows[wfIndex]);
                     
                 default:

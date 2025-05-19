@@ -14,7 +14,7 @@
         <tbody>
           <tr *ngFor="let workflow of workflows">
             <td>{{ workflow.type }}</td>
-            <td>{{ workflow.details | json }}</td>
+            <td>{{ workflow.details?.step }}</td>
             <td>{{ workflow.status }}</td>
             <td *ngIf="account()?.role === 'Admin'">
               <select class="form-select d-inline-block w-auto"
