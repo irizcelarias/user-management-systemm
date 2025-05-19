@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AddEditComponent } from './add-edit.component';
+import { RequestAddEditComponent } from './add-edit.component';
 
 @Component({
   selector: 'app-request-list',
@@ -49,7 +49,7 @@ export class ListComponent implements OnInit {
   }
 
   add() {
-    const modalRef = this.modalService.open(AddEditComponent, { size: 'lg' });
+    const modalRef = this.modalService.open(RequestAddEditComponent, { size: 'lg' });
     modalRef.componentInstance.title = 'Add Request';
     modalRef.componentInstance.employees = this.employees;
     modalRef.componentInstance.request = {
@@ -82,7 +82,7 @@ export class ListComponent implements OnInit {
     const request = this.requests.find(r => r.id === id);
     if (!request) return;
 
-    const modalRef = this.modalService.open(AddEditComponent, { size: 'lg' });
+    const modalRef = this.modalService.open(RequestAddEditComponent, { size: 'lg' });
     modalRef.componentInstance.title = 'Edit Request';
     modalRef.componentInstance.employees = this.employees;
     modalRef.componentInstance.id = id;
