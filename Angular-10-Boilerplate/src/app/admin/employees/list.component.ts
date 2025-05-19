@@ -4,6 +4,7 @@ import { Employee } from 'src/app/_models/employee.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddEmployeeModalComponent } from './add-employee-modal/add-employee-modal.component';
 import { Router } from '@angular/router';
+import { EmployeeTransferComponent } from './transfer-employee-modal/employee-transfer.component';
 
 @Component({
   selector: 'app-employee-list',
@@ -20,6 +21,10 @@ export class ListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadEmployees();
+  }
+
+  loadEmployees(): void {
     this.http.get<Employee[]>('/employees').subscribe((res) => {
       this.employees = res;
     });
@@ -38,13 +43,29 @@ export class ListComponent implements OnInit {
   }
 
   transfer(employee: Employee): void {
-    console.log('Transferring employee:', employee);
-    // You can open a modal here if needed
-  }
+  const modalRef = this.modalService.open(EmployeeTransferComponent, { centered: true });
+  modalRef.componentInstance.employeeId = employee.employeeId;
+  modalRef.componentInstance.departments = ['Engineering', 'HR', 'IT']; // Replace with real fetch later
+
+  modalRef.result.then((selectedDept) => {
+    if (selectedDept) {
+      // Find exact employee using object reference
+      const index = this.employees.indexOf(employee);
+      if (index !== -1) {
+        this.employees[index].department = selectedDept;
+
+        // ✅ Optionally log to confirm
+        console.log(`Updated department: ${this.employees[index].employeeId} -> ${selectedDept}`);
+
+        // ✅ Optional: save to backend/localStorage if needed
+      }
+    }
+  }).catch(() => {});
+}
 
   edit(id: number): void {
     console.log('Editing employee:', id);
-    // You can implement modal logic here if needed
+    // Modal edit logic if needed
   }
 
   delete(id: number): void {

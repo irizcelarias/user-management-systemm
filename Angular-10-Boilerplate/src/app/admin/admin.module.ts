@@ -9,6 +9,7 @@ import { LayoutComponent } from './layout.component';
 import { OverviewComponent } from './overview.component';
 import { RequestAddEditComponent } from './requests/add-edit.component';
 import { DepartmentAddEditComponent } from './departments/add-edit.component';
+import { EmployeeTransferComponent } from './employees/transfer-employee-modal/employee-transfer.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { DepartmentAddEditComponent } from './departments/add-edit.component';
         LayoutComponent,
         OverviewComponent,
         RequestAddEditComponent,
-        DepartmentAddEditComponent
+        DepartmentAddEditComponent,
+        EmployeeTransferComponent
     ]
 })
 
