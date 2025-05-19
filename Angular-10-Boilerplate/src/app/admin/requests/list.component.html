@@ -19,14 +19,14 @@
           <tbody>
             <tr *ngFor="let request of requests">
               <td>{{ request.type }}</td>
-              <td>{{ req.employee?.email }} ({{ req.employee?.role }})</td>
+              <td>{{ request.employee?.email }} ({{ request.employee?.role }})</td>
               <td>
-                <div *ngFor="let item of req.requestItems">
+                <div *ngFor="let item of request.requestItems">
                   {{ item.name }} (x{{ item.quantity }})
                 </div>
               </td>
               <td>
-                <span class="badge px-3 py-1" 
+                <span class="badge px-3 py-1"
                       [ngClass]="{
                         'bg-warning text-dark': request.status === 'Pending',
                         'bg-success': request.status === 'Approved',
@@ -38,8 +38,8 @@
               <td>
                 <div class="d-flex flex-wrap gap-2">
                   <button class="btn btn-primary" (click)="edit(request.id)">Edit</button>
-                  <button *ngIf="account()?.role === 'Admin'" 
-                          class="btn btn-sm btn-danger" 
+                  <button *ngIf="account()?.role === 'Admin'"
+                          class="btn btn-sm btn-danger"
                           (click)="delete(request.id)">Delete</button>
                 </div>
               </td>
@@ -53,4 +53,50 @@
       </div>
     </div>
   </div>
+
+  <!-- MODAL TEMPLATE -->
+  <ng-template #requestModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">{{ isEdit ? 'Edit Request' : 'Add Request' }}</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="mb-3">
+          <label>Type</label>
+          <select class="form-control" [(ngModel)]="requestForm.type" name="type">
+            <option value="Equipment">Equipment</option>
+            <option value="Leave">Leave</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Employee</label>
+          <select class="form-control" [(ngModel)]="requestForm.employeeId" name="employee">
+            <option *ngFor="let emp of employees" [value]="emp.employeeId">{{ emp.employeeId }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Items</label>
+          <div *ngFor="let item of requestForm.items; let i = index" class="row g-2 mb-2">
+            <div class="col">
+              <input type="text" class="form-control" [(ngModel)]="item.name" name="itemName{{i}}" placeholder="Name" />
+            </div>
+            <div class="col">
+              <input type="number" class="form-control" [(ngModel)]="item.quantity" name="itemQty{{i}}" placeholder="Quantity" />
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn btn-danger" (click)="removeItem(i)">Remove</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" (click)="addItem()">Add Item</button>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="saveRequest(modal)">Save</button>
+      <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    </div>
+  </ng-template>
 </div>
