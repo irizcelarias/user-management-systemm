@@ -5,7 +5,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-request-add-edit',
   templateUrl: './add-edit.component.html'
 })
-export class AddEditComponent implements OnInit {
+export class RequestAddEditComponent implements OnInit {
   @Input() id: number | null = null;
   @Input() title: string = 'Add Request';
   @Input() employees: { employeeId: string; email: string; role: string }[] = [];

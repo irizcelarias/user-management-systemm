@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-department-list',
@@ -15,7 +16,7 @@ export class ListComponent implements OnInit {
 
   currentUser = { role: 'Admin' };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
     this.http.get<any[]>('/departments').subscribe((res) => {
@@ -28,8 +29,8 @@ export class ListComponent implements OnInit {
   }
 
   edit(id: number) {
-    console.log('Editing department:', id);
-  }
+  this.router.navigate(['/admin/departments/edit', id]);
+}
 
   delete(id: number) {
     this.http.delete(`/departments/${id}`).subscribe(() => {
@@ -38,6 +39,6 @@ export class ListComponent implements OnInit {
   }
 
   add() {
-    console.log('Add new department');
-  }
+  this.router.navigate(['/admin/departments/add']);
+}
 }

@@ -7,7 +7,9 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { SubNavComponent } from './subnav.component'; 
 import { LayoutComponent } from './layout.component'; 
 import { OverviewComponent } from './overview.component';
-import { AddEditComponent } from './requests/add-edit.component';
+import { RequestAddEditComponent } from './requests/add-edit.component';
+import { DepartmentAddEditComponent } from './departments/add-edit.component';
+
 
 @NgModule({
     imports: [
@@ -20,7 +22,8 @@ import { AddEditComponent } from './requests/add-edit.component';
         SubNavComponent,
         LayoutComponent,
         OverviewComponent,
-        AddEditComponent
+        RequestAddEditComponent,
+        DepartmentAddEditComponent
     ]
 })
 
