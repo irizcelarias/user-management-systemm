@@ -15,12 +15,13 @@
 
   <div class="mb-3">
     <label class="form-label">Employee</label>
-    <select class="form-select" [(ngModel)]="request.employee">
-      <option [ngValue]="null" disabled selected>Select Employee</option>
-      <option *ngFor="let e of employees" [ngValue]="e">
-        {{ e.email }} ({{ e.role }})
-      </option>
-    </select>
+    <select class="form-select" [(ngModel)]="request.employeeId">
+  <option value="">Select Employee</option>
+  <option *ngFor="let emp of employees" [value]="emp.employeeId">
+    {{ emp.email }} ({{ emp.role }})
+  </option>
+</select>
+
   </div>
 
   <label class="form-label">Items</label>
