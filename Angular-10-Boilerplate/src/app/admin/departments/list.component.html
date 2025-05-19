@@ -1,0 +1,43 @@
+<div class="container mt-4">
+  <div class="card shadow-sm border rounded-3 mx-auto" style="max-width: 1000px;">
+    <div class="card-header bg-light">
+      <h5 class="text-uppercase fw-bold mb-0">Departments</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Employee Count</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let dept of departments">
+              <td>{{ dept.name }}</td>
+              <td>{{ dept.description }}</td>
+              <td>{{ dept.employeeCount }}</td>
+              <td>
+                <div class="d-flex flex-wrap gap-2">
+                  <button class="btn btn-sm btn-primary" (click)="edit(dept.id)">Edit</button>
+                  <button *ngIf="account()?.role === 'Admin'" 
+                          class="btn btn-sm btn-danger" 
+                          (click)="delete(dept.id)">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="text-end mt-3">
+        <button *ngIf="account()?.role === 'Admin'" 
+                class="btn btn-primary px-4" 
+                (click)="add()">Add Department</button>
+      </div>
+    </div>
+  </div>
+</div>
